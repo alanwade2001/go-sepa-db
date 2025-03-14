@@ -16,11 +16,9 @@ type Persist struct {
 	schemaName string
 }
 
-func NewPersist(schemaName string) *Persist {
+func NewPersist() *Persist {
 
-	service := &Persist{
-		schemaName: schemaName,
-	}
+	service := &Persist{}
 
 	service.Connect()
 
@@ -34,6 +32,7 @@ func (p *Persist) Connect() error {
 	user := utils.Getenv("DB_USER", "postgres")
 	password := utils.Getenv("DB_PASSWORD", "postgres")
 	name := utils.Getenv("DB_NAME", "postgres")
+	schemaName := utils.Getenv("DB_SCHEMA", "public")
 
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
@@ -44,7 +43,7 @@ func (p *Persist) Connect() error {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
-			TablePrefix:   p.schemaName + ".", // schema name
+			TablePrefix:   schemaName + ".", // schema name
 			SingularTable: false,
 		},
 	})
